@@ -18,21 +18,22 @@ dropdown.add(defaultOption);
 dropdown.selectedIndex = 0;
 
 
-fetch(url)
-  .then(response => response.json())
-  .then(data => {
-	  
-    let option;
 
-    for (let i = 0; i < data.length; i++) {
-      option = document.createElement("option");
-      option.text = data[i].name;
-      option.value = i;
-      dropdown.add(option);
-    }
-    mainRepo = data;
-  })
-  .catch(error => console.error(error));
+  function fetchJSON(url, cb) {
+    const xhr = new XMLHttpRequest();
+    xhr.open('GET', url);
+    xhr.responseType = 'json';
+    xhr.onload = () => {
+      if (xhr.status < 400) {
+        cb(null, xhr.response);
+      } else {
+        cb(new Error(`Network error: ${xhr.status} - ${xhr.statusText}`));
+      }
+    };
+    xhr.onerror = () => cb(new Error('Network request failed'));
+    xhr.send();
+  }
+
 
 // Get Contributors
 function getContributors(repo) {
